@@ -23,8 +23,8 @@ class UserManager(BaseUserManager):
 
 class User( AbstractBaseUser, PermissionsMixin ):
     email = models.EmailField(unique=True)
-    primer_nombre = models.CharField(max_length=30)
-    primer_apellido = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
     cedula_rif = models.CharField(max_length=30,unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

@@ -20,12 +20,18 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
+from users.urls import router as users_router
+from products.urls import router as products_router
+
 router = DefaultRouter()
+router.registry.extend(users_router.registry)
+router.registry.extend(products_router.registry)
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # API Routes
-    path('api/', include(router.urls)),
+    path('api/v1/', include(router.urls)),
+    #login browsable
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
 
     # Auth / JWT
@@ -36,4 +42,6 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
+    
 ]

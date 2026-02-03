@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 from pathlib import Path
@@ -33,7 +34,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'drf_spectacular',
-    'users'
+    'core',
+    'users',
+    'sales',
+    'products'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +139,44 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Modelo de User
 AUTH_USER_MODEL = 'users.User'
+
+
+# Configuración de los tokens JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=600), # Tiempo de vida del token de acceso (10 horas)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),   # Tiempo de vida del token de refresco
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': os.getenv('SECRET_KEY'), 
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_HEADER_TYPES': ('Bearer',), # Tipo de encabezado, "Bearer" es el estándar para JWT
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+
+    'AUTH_COOKIE': 'jwt_refresh_token',  # Nombre de la cookie para el refresh token
+    'AUTH_COOKIE_DOMAIN': None,
+    # 'AUTH_COOKIE_SECURE': config('AUTH_COOKIE_SECURE', default=False, cast=bool), # Cambiar a True en producción con HTTPS
+    'AUTH_COOKIE_HTTP_ONLY': True, # Esto es crucial para la seguridad (JS no puede acceder)
+    'AUTH_COOKIE_SAMESITE': 'Lax', # 'Lax' es un buen balance entre seguridad y usabilidad
+}
+
