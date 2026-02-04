@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     'core',
+    'my_auth',
     'users',
     'sales',
     'products'
@@ -50,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'crum.CurrentRequestUserMiddleware',
 ]
 
 ROOT_URLCONF = 'venta_control.urls'

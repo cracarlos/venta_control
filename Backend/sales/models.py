@@ -16,7 +16,7 @@ class Sales( BaseModel ):
         super(Sales, self).save()
 
 class Sale_products( BaseModel ):
-    sale = models.ForeignKey(Sales, on_delete=models.CASCADE)
+    sale = models.ForeignKey(Sales, on_delete=models.CASCADE, related_name='sale_products')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
