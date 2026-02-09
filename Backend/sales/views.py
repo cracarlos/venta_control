@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Sales, Sale_products
+from products.models import Product
 from .serializers import SalesSerializer, SaleProductsSerializer
 
 class SalesManagerApiVIew(APIView):
@@ -11,17 +12,18 @@ class SalesManagerApiVIew(APIView):
     def get(self, request, format=None):
         sales = Sales.objects.all()
         serializer = SalesSerializer(sales, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         serializer = SalesSerializer(data=request.data)
         if serializer.is_valid():
-            resp =serializer.save()
-            print(request.data["products"])
+            resp = serializer.save()
+            print(request.data)
+            # print(Product.objects.get(id=request.data['products'][0]["product_id"]).id)
             for product in request.data["products"]:
                 sale_products_data = {
                     "sale": resp.id,
-                    "product": product["product_id"],
+                    "product": product["product"],
                     "quantity": product["quantity"],
                     "price": product["price"]
                 }
