@@ -1,6 +1,8 @@
 from django.utils.timezone import localtime
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 from crum import get_current_request
 from .models import LoginHistory
 
@@ -22,8 +24,9 @@ class MyTokenSerializer(TokenObtainPairSerializer):
             # Aquí agregar datos adicionales al payload de la respuesta JSON
             # que no necesariamente van en el token, pero que se quiere enviar al cliente
             data['user_id'] = self.user.id
+            data['ok'] = True
             data['email'] = f"{self.user.email}"
-            data['full_name'] = f"{self.user.first_name} {self.user.last_name}"
+            data['full_name'] = f"{self.user.first_name} {self.user.middle_name[0].upper()}. {self.user.last_name} {self.user.second_last_name[0].upper()}."
             data['password_update'] = self.user.password_update
 
             model.usuario = self.user.email
@@ -31,17 +34,18 @@ class MyTokenSerializer(TokenObtainPairSerializer):
             model.ip = request.META['REMOTE_ADDR']
             model.save()
             return data
-        except Exception as e:
+        except AuthenticationFailed:
             model = LoginHistory()
             username = attrs.get(self.username_field)
             model.usuario = username
             model.status = 'fallida'
             model.ip = request.META['REMOTE_ADDR']
             model.save()
-            print(f"Login fallido para el usuario: {username} - Razón: {e}")
-            raise serializers.ValidationError(
-                {"detail": "La ip no se puede consignar"}
-            )
+            print(f"Login fallido para el usuario: {username} - Razón: {AuthenticationFailed}")
+            raise AuthenticationFailed({
+                "ok": False,
+                "message": "Credenciales inválidas. Por favor, verifica tu correo o contraseña."
+            })
 
 class LoginHistorySerializer(serializers.ModelSerializer):
 
