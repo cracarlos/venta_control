@@ -10,7 +10,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { UserAvatarInfo} from '@/components/UserAvatarInfo';
-import { Barcode, DollarSign, NotebookTabs, UserPlus, Users } from "lucide-react";
+import { Barcode, DollarSign, LayoutDashboard, NotebookTabs, UserPlus, Users } from "lucide-react";
+import { Link } from "react-router";
 
 export function AppSidebar() {
   return (
@@ -32,9 +33,21 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-            <SidebarGroupLabel>Ventas</SidebarGroupLabel>
             <SidebarMenu>
                 <SidebarMenuItem key="dashboard">
+                    <SidebarMenuButton asChild>
+                      <Link to={"/dashboard"} >
+                        <LayoutDashboard />
+                        Dashboard
+                      </Link> 
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+            <SidebarGroupLabel>Ventas</SidebarGroupLabel>
+            <SidebarMenu>
+                <SidebarMenuItem key="ventas">
                     <SidebarMenuButton asChild>
                         <a href="#">
                             <DollarSign />
@@ -62,10 +75,10 @@ export function AppSidebar() {
             <SidebarMenu>
                 <SidebarMenuItem key="user-listado">
                     <SidebarMenuButton asChild>
-                        <a href="#">
+                      <Link to={"/users"} >
                         <Users />
-                        <span>Listado</span>
-                        </a>
+                        Listado
+                      </Link> 
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>

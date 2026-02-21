@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/hooks/useAuthStore";
+import { useUiStore } from "@/hooks/useUiStore";
 import { Navigate, Outlet, useLocation } from "react-router";
 
 // 1. Definimos una interfaz sencilla para el estado de autenticación
@@ -10,10 +11,11 @@ export const ProtectedRoute = () => {
     const location = useLocation();
     
     const { isAuthenticated }: AuthState = useAuthStore(); 
+    const { isLoading } = useUiStore();
 
-//   if (isLoading) {
-//     return <div>Cargando sesión... ⏳</div>;
-//   }
+    // if (isLoading) {
+    //     return <div>Cargando sesión... ⏳</div>;
+    // }
 
     // si no está autenticado
     if (!isAuthenticated && location.pathname !== "/") {

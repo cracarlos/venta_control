@@ -51,10 +51,9 @@ export const Auth = () => {
 
   return (
     <>
-        
       <Card className="w-full max-w-sm">
         <CardHeader>
-          { messageError && <AlertPerson ok={false} message={messageError} /> }
+          { messageError && <AlertPerson ok={false} message={messageError} title="Error login" /> }
           <CardTitle>Venta Control</CardTitle>
           <CardDescription>
             Sistema para control de ventas e inventario
@@ -91,7 +90,7 @@ export const Auth = () => {
           >
             {isError ? <Spinner /> : "Login"}
           </Button>
-          {/* <Link to={"/dasboard"} className="w-full">
+          {/* <Link to={"/dashboard"} className="w-full">
             <Button 
               type="submit"
               className="w-full"

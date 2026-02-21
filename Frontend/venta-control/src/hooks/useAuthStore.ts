@@ -49,7 +49,11 @@ export const useAuthStore = () => {
             
         } catch (error: any) {
 
-            console.log(error)
+            console.log(error);
+            // Revisar
+            localStorage.removeItem("token");
+            localStorage.removeItem("refresh");
+            dispatch(logoutSlice());
             
             return error;
         }

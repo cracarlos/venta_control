@@ -1,4 +1,5 @@
 export interface AlertProps {
-    ok: boolean;
+    ok: number | boolean;
     message: string;
+    title: string;
 }
