@@ -37,10 +37,13 @@ export const AuthSlice = createSlice({
             state.fullName = ""
             state.passwordUpdate = false
         },
+        passwordUpdateSlice: (state, { payload }: PayloadAction<boolean>) => {
+            state.passwordUpdate = payload
+        }
     },
 })
 
-export const { loginSlice, logoutSlice } = AuthSlice.actions
+export const { loginSlice, logoutSlice, passwordUpdateSlice } = AuthSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectAuth = (state: RootState) => state.auth

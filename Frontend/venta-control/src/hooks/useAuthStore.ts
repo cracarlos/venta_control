@@ -1,11 +1,13 @@
 import { postLogin, postLogout } from "@/services/authService"
 import type { AuthApi, AuthLogin } from "@/types/auth";
 import { useAppDispatch, useAppSelector } from "./useStore";
-import { loginSlice, logoutSlice } from "@/store/Auth/authSlice";
+import { loginSlice, logoutSlice, passwordUpdateSlice } from "@/store/Auth/authSlice";
+import type { PasswordUpdate } from "@/types/user";
+import { postPasswordUpdate } from "@/services/usersServices";
 
 export const useAuthStore = () => {
 
-    const { fullName, email, isAuthenticated } = useAppSelector((state) => state.auth); 
+    const { fullName, email, isAuthenticated, passwordUpdate } = useAppSelector((state) => state.auth); 
     
     const dispatch = useAppDispatch();
     
@@ -59,14 +61,31 @@ export const useAuthStore = () => {
         }
     }
 
+    const _passwordUpdate = async (data:PasswordUpdate) => {
+        try {
+            const resp = await postPasswordUpdate(data);
+            return resp;
+        } catch (error) {
+            console.log(error)
+            return error;
+        }
+    }
+
+    const _passwordUpdateSlice = (passwordUpdate: boolean) => {
+        dispatch(passwordUpdateSlice(passwordUpdate));
+    }
+
   return {
     // Methods
     Login,
     Logout,
+    _passwordUpdate,
+    _passwordUpdateSlice,
 
     // Properties
     email,
     fullName,
     isAuthenticated,
+    passwordUpdate,
   }
 }

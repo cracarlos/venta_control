@@ -1,13 +1,16 @@
-import { getGroups, getUsers, getUserId } from '@/services/usersServices'
+import { getGroups, getUsers, getUserId, putUsers } from '@/services/usersServices'
 import type { Groups } from '@/types/groups';
 import type { User, UserRegister } from '@/types/user';
-import { useAppDispatch } from './useStore';
+import { useAppDispatch, useAppSelector } from './useStore';
 import { cleanUser, setUser } from '@/store/User/userSlice';
 
 export const useUsersStore = () => {
+    const userData = useAppSelector(state => state.user);
+
     const dispatch = useAppDispatch();
+
     const _getUsers = async (): Promise<User[]> => {
-        const resp = getUsers();
+        const resp = await getUsers();
         return resp;
     };
     
@@ -18,8 +21,12 @@ export const useUsersStore = () => {
 
     const _getUserById = async (userId:number) => {
         const resp = await getUserId(userId);
-        console.log(resp);
         dispatch(setUser(resp));
+    }
+    
+    const _editUser = async (user:UserRegister) => {
+        const resp = await putUsers(user);
+        return resp;
     }
     
     const _cleanUser = async () => {
@@ -32,5 +39,9 @@ export const useUsersStore = () => {
         _getGroups,
         _getUserById,
         _cleanUser,
+        _editUser,
+
+        // Propierty
+        userData
     }
 }

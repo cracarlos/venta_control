@@ -19,14 +19,27 @@ class MyTokenSerializer(TokenObtainPairSerializer):
 
             data = super().validate(attrs)
             model = LoginHistory()
-            print("pasando")
 
             # Aquí agregar datos adicionales al payload de la respuesta JSON
             # que no necesariamente van en el token, pero que se quiere enviar al cliente
             data['user_id'] = self.user.id
             data['ok'] = True
             data['email'] = f"{self.user.email}"
-            data['full_name'] = f"{self.user.first_name} {self.user.middle_name[0].upper()}. {self.user.last_name} {self.user.second_last_name[0].upper()}."
+            
+            if self.user.first_name and self.user.middle_name and self.user.last_name and self.user.second_last_name:
+                data['full_name'] = f"{self.user.first_name} {self.user.middle_name[0].upper()}. {self.user.last_name} {self.user.second_last_name[0].upper()}."
+            
+            if self.user.first_name and self.user.middle_name == '' and self.user.last_name and self.user.second_last_name:
+                data['full_name'] = f"{self.user.first_name} {self.user.last_name} {self.user.second_last_name[0].upper()}."
+            
+            if self.user.first_name and self.user.middle_name and self.user.last_name and self.user.second_last_name == '':
+                data['full_name'] = f"{self.user.first_name} {self.user.middle_name[0].upper()}. {self.user.last_name}"
+            
+            if self.user.first_name and self.user.middle_name == '' and self.user.last_name and self.user.second_last_name == '':
+                data['full_name'] = f"{self.user.first_name} {self.user.last_name}"
+
+           
+            
             data['password_update'] = self.user.password_update
 
             model.usuario = self.user.email

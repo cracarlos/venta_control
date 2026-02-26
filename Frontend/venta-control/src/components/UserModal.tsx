@@ -22,7 +22,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { User, UserRoundPen, UserRoundPlus } from "lucide-react"
+import { UserRoundPlus } from "lucide-react"
 import { Checkbox } from "./ui/checkbox"
 import type { UserRegister } from "@/types/user"
 import type { Groups } from "@/types/groups"
@@ -30,44 +30,36 @@ import { useUsersStore } from "@/hooks/useUsersStore"
 import { Spinner } from "./ui/spinner"
 import { toast } from "sonner"
 
-import { getUserId, postUsers } from "@/services/usersServices"
+import { postUsers } from "@/services/usersServices"
 import { AlertPerson } from "./AlertPerson"
 import { useUiStore } from "@/hooks/useUiStore"
 import { setIsLoading } from "@/store/UI/uiSlices"
 
 export const UserModal = () => {
-    const {register, handleSubmit, setValue, getValues, reset, formState: {isValid}} = useForm<UserRegister>({
+    const {register, handleSubmit, setValue, getValues, reset, trigger, formState: {isValid}} = useForm<UserRegister>({
         mode: "onChange"
     });
 
     const { modalOpen, _setModalOpen } = useUiStore();
 
-    // const {_getUserById} = useUsersStore();
-
-    // const getUserByid = async (userId:number) => {
-    //     const user = await _getUserById(userId);
-    //     console.log(user)
-    //     return user;
-    // }
+    const { userData } = useUsersStore();
 
     const inputRef = useRef<HTMLButtonElement>(null);
 
-    const { _getGroups, _cleanUser } = useUsersStore();
+    const { _getGroups, _cleanUser, _editUser } = useUsersStore();
     const { isLoading, _setIsLoading } = useUiStore();
 
     const [groups, setGroups] = useState<Groups[]>([]);
     const [status, setStatus] = useState<boolean>(true);
-    const [groupSelect, setGroupSelect] = useState<number[]>([]);
+    const [groupSelect, setGroupSelect] = useState<number[]>([1]);
     const [apiResp, setApiResp] = useState<any>(null)
-    const [open, setOpen] = useState(false)
 
     const handleGroups = (data:string) => {
-        console.log(data);
-        setGroupSelect(prev => [...prev, Number(data)]);
+        setGroupSelect([Number(data)]);
+        trigger();
     };
 
     const handleCancel = () => {
-        console.log("pase")
         reset();
         setApiResp(null);
         setIsLoading(false);
@@ -78,26 +70,50 @@ export const UserModal = () => {
 
     const onSubmit: SubmitHandler<UserRegister> = async () => {
         _setIsLoading(true);
-    
+
         setValue("groups", groupSelect);
         setValue("is_active", status);
-        setValue("password", getValues("cedula_rif"));
-        const dataNew = getValues();
-        const resp = await postUsers(dataNew);
-        console.log(resp);
-        setApiResp(resp)
-    
-        if (resp.status == 201) {
-            toast.success("Usuario creado exitosamente.", { position: "bottom-right" })
-            _setIsLoading(false);
-            // setOpen(false);
-            _setModalOpen(false);
-            reset();
-          
-        } else {
-            _setIsLoading(false);
+
+        if (userData.id == 0) {
+            console.log('creted')
+            setValue("password", getValues("cedula_rif"));
+            const dataNew = getValues();
+            console.log(dataNew)
+            const resp =  await postUsers(dataNew);
+            console.log(resp);
+            setApiResp(resp)
+        
+            if (resp.status == 201) {
+                toast.success("Usuario creado exitosamente.", { position: "bottom-right" })
+                _setIsLoading(false);
+                // setOpen(false);
+                _setModalOpen(false);
+                reset();
+              
+            } else {
+                _setIsLoading(false);
+            }
+            
+        }else {
+            console.log('edit-guardado');
+            setValue("id", userData.id);
+            const dataNew = getValues();
+            console.log(dataNew);
+            const resp = await _editUser(dataNew);
+            setApiResp(resp);
+
+            if (resp.status == 200) {
+                toast.success("Usuario editado exitosamente.", { position: "bottom-right" })
+                _setIsLoading(false);
+                // setOpen(false);
+                _setModalOpen(false);
+                reset();
+              
+            } else {
+                _setIsLoading(false);
+            }
         }
-    
+
     }
 
     const getGroupsList = async () => {
@@ -109,6 +125,22 @@ export const UserModal = () => {
     useEffect(() => {
         getGroupsList();
     }, [])
+
+    useEffect(() => {
+        setValue("first_name", userData.first_name);
+        setValue("middle_name", userData.middle_name);
+        setValue("last_name", userData.last_name);
+        setValue("second_last_name", userData.second_last_name);
+        setValue("cedula_rif", userData.cedula_rif);
+        setValue("email", userData.email);
+        setGroupSelect(userData.groups[0]?.id ? [userData.groups[0].id] : []);
+        setStatus(userData.is_active);
+    }, [userData])
+
+    useEffect(() => {
+        handleCancel();
+    }, [modalOpen])
+    
     
     
   return (
@@ -173,7 +205,7 @@ export const UserModal = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Field>
                             <Label htmlFor="groups"> <span className="text-red-500">*</span>Grupo</Label>
-                            <Select onValueChange={handleGroups} required>
+                            <Select onValueChange={handleGroups} value={groupSelect[0]?.toString()} required>
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Seleccione..." />
                                 </SelectTrigger>
@@ -181,7 +213,7 @@ export const UserModal = () => {
                                     <SelectGroup>
                                         {
                                             groups.map((group) => (
-                                                <SelectItem key={group.id} value={group.id.toString()}>{group.name}</SelectItem>
+                                                <SelectItem key={group.id} value={group.id.toString()} >{group.name}</SelectItem>
                                             ))
                                         }
                                     </SelectGroup>

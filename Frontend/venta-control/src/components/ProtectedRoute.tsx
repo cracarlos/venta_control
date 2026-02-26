@@ -5,12 +5,13 @@ import { Navigate, Outlet, useLocation } from "react-router";
 // 1. Definimos una interfaz sencilla para el estado de autenticación
 interface AuthState {
   isAuthenticated: boolean;
+  passwordUpdate: boolean;
 }
 
 export const ProtectedRoute = () => {
     const location = useLocation();
     
-    const { isAuthenticated }: AuthState = useAuthStore(); 
+    const { isAuthenticated, passwordUpdate }: AuthState = useAuthStore(); 
     const { isLoading } = useUiStore();
 
     // if (isLoading) {
@@ -24,9 +25,16 @@ export const ProtectedRoute = () => {
     }
     // si está autenticado
     if (isAuthenticated && location.pathname === "/") {
+            
         // Guardamos la ruta a la que intentaba ir el usuario para volver luego
         return <Navigate to="/dashboard" state={{ from: location }} replace />;
     }
 
-  return <Outlet />;
+    // Si el usuario no a actualizado su contraseña
+    if (isAuthenticated && !passwordUpdate && location.pathname !== "/password-update" ) return <Navigate to="/password-update" replace />
+    // Si el usuario esta autenticado y yá actualizó su contraseña
+    if (isAuthenticated && passwordUpdate && location.pathname == "/password-update" ) return <Navigate to="/dashboard" replace />
+    
+    return <Outlet />;
+
 };

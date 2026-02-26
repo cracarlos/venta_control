@@ -1,9 +1,12 @@
 # Rest Framework
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
 # App
 from .models import User
-from .serializers import UserSerializer, GroupSerializer, PermissionSerializer
+from .serializers import UserSerializer, GroupSerializer, PermissionSerializer, UserPasswordSerializer
 from django.contrib.auth.models import Group, Permission
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -26,4 +29,45 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
     permission_classes = [IsAuthenticated]
+
+
+# class UserPasswordUpdateAPIView(viewsets.GenericViewSet):
+#     # permission_classes = [IsAuthenticated]
+#     serializer_class = UserPasswordSerializer
+    
+#     @action(detail=False, methods=['post'], url_path='password_update')
+#     def password_update(self, request, *args, **kwargs):
+#         print(request.data)
+#         user = request.user
+#         serializer = UserPasswordSerializer(data=request.data)
+#         if serializer.is_valid():
+#             user = request.user
+#             user.set_password(serializer.data.get("password"))
+#             # user.save()
+#             return Response({"message": "Contraseña actualizada exitosamente."}, status=200)
+#         return Response(serializer.errors, status=400)
+
+class UserPasswordUpdateAPIView(APIView):
+    # permission_classes = [IsAuthenticated]
+    serializer_class = UserPasswordSerializer
+
+    def post(self, request):
+        print(request.data)
+        serializer = self.serializer_class(data=request.data)
+        if request.data['password'] != request.data['passwordConfirm']:
+            return Response({"message": "Contraseñas no coinciden"}, status=400)
+
+        if serializer.is_valid():
+            try:
+                user = User.objects.get(id=request.user.id)
+                new_password = serializer.validated_data['password']
+                user.set_password(new_password)
+                user.password_update = True
+                user.save()
+            except Exception as e:
+                print(f"Error: {e}")
+                return Response({"message": f"Error en servidor: {e}"}, status=500)
+            return Response({"userPasswordChanged": user.password_update, "message": "Contraseña actualizada exitosamente."}, status=200)
+        return Response(serializer.errors, status=400)
+
 

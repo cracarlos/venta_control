@@ -82,16 +82,6 @@ export function AppSidebar() {
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
-            <SidebarMenu>
-                <SidebarMenuItem key="user-registro">
-                    <SidebarMenuButton asChild>
-                        <a href="#">
-                        <UserPlus />
-                        <span>Registro</span>
-                        </a>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>

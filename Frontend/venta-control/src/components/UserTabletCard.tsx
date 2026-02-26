@@ -4,8 +4,6 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card"
-import { Button } from "./ui/button"
-import { UserRoundPlus } from "lucide-react"
 import { UserModal } from "./UserModal"
 
 export const UserTabletCard = ({children}:any) => {

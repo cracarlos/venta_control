@@ -1,3 +1,5 @@
+import type { Groups } from "./groups";
+
 export interface User {
     id: number,
     password: string,
@@ -14,7 +16,8 @@ export interface User {
     password_update: boolean,
     created_at: string,
     updated_at: string,
-    groups: string[],
+    groups: Groups[],
+    // groups: any[],
     user_permissions: string[]
 }
 
@@ -40,5 +43,10 @@ export interface UserByID {
     second_last_name: string,
     cedula_rif: string,
     is_active: boolean,
-    groups: number[],
+    groups: Groups[],
+}
+
+export interface PasswordUpdate {
+    password: string,
+    passwordConfirm: string,
 }
