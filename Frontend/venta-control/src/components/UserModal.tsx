@@ -145,11 +145,11 @@ export const UserModal = () => {
     
   return (
     <Dialog open={modalOpen} onOpenChange={_setModalOpen}>
-        <DialogTrigger asChild>
+        {/* <DialogTrigger asChild>
             <Button variant="outline">
                 <UserRoundPlus />
             </Button>
-        </DialogTrigger>
+        </DialogTrigger> */}
         <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
             <DialogHeader>
                 <DialogTitle>Agregar usuario</DialogTitle>

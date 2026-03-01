@@ -115,3 +115,11 @@ class UserPasswordSerializer(serializers.ModelSerializer):
             'id',
             'password',
         ]
+
+class UserPasswordDefaultSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id'
+        ]

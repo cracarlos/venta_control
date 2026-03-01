@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/v1/sales/', include('sales.urls')),
     path('api/v1/auth/', include('my_auth.urls')),
     path('api/v1/user-password/', include('users.urls')),
+    path('api/v1/password/', include('users.urls')),
     
     #login browsable
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),

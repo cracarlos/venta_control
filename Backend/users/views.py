@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 # App
 from .models import User
-from .serializers import UserSerializer, GroupSerializer, PermissionSerializer, UserPasswordSerializer
+from .serializers import UserSerializer, GroupSerializer, PermissionSerializer, UserPasswordSerializer, UserPasswordDefaultSerializer
 from django.contrib.auth.models import Group, Permission
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -69,5 +69,25 @@ class UserPasswordUpdateAPIView(APIView):
                 return Response({"message": f"Error en servidor: {e}"}, status=500)
             return Response({"userPasswordChanged": user.password_update, "message": "Contraseña actualizada exitosamente."}, status=200)
         return Response(serializer.errors, status=400)
+
+class UserPasswordDefaultAPIView(APIView):
+    serializer_class = UserPasswordDefaultSerializer
+
+    def patch(self, request, pk):
+        # print(request.data)
+        # serializer = self.serializer_class(data=request.data)
+        # if serializer.is_valid():
+        try:
+            user = User.objects.get(pk=pk)
+            user.set_password(user.cedula_rif)
+            user.password_update = False
+            user.save()
+        except Exception as e:
+            print(f"Error: {e}")
+            return Response({"message": f"Error en servidor: {e}"}, status=500)
+        
+        return Response({"message": "Contraseña actualizada por defecto."}, status=200)
+        
+        # return Response(serializer.errors, status=400)
 
 

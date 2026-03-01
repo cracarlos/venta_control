@@ -5,12 +5,14 @@ import type { RootState } from '../store'
 interface uiState {
     isLoading: boolean,
     modalOpen: boolean,
+    modalName: string
 }
 
 // Define the initial state using that type
 const initialState: uiState = {
     isLoading: false,
     modalOpen: false,
+    modalName: ''
 }
 
 export const uiSlice = createSlice({
@@ -23,10 +25,13 @@ export const uiSlice = createSlice({
         setModalOpen: (state, { payload }: PayloadAction<boolean>) => {
             state.modalOpen = payload
         },
+        setModalName: (state, { payload }: PayloadAction<string>) => {
+            state.modalName = payload
+        },
     },
 })
 
-export const { setIsLoading, setModalOpen } = uiSlice.actions
+export const { setIsLoading, setModalOpen, setModalName } = uiSlice.actions
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectUI = (state: RootState) => state.ui

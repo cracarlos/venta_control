@@ -11,16 +11,15 @@ import {
 } from "@/components/ui/table";
 
 import { useUsersStore } from "@/hooks/useUsersStore";
-import type { User, UserRegister } from "@/types/user";
+import type { User } from "@/types/user";
 import { UserTabletCard } from "./UserTabletCard";
 import { useUiStore } from "@/hooks/useUiStore";
 import { Button } from "./ui/button";
-import { UserRoundPen } from "lucide-react";
+import { KeyRound, UserRoundPen } from "lucide-react";
 
 export const UserTableList = () => {
     const { _getUsers, _getUserById } = useUsersStore();
-    const { _setModalOpen } = useUiStore();
-    const { isLoading } = useUiStore();
+    const { _setModalOpen, _setModalName, isLoading } = useUiStore();
 
     const [users, setUsers] = useState<User[]>([]);
 
@@ -34,6 +33,16 @@ export const UserTableList = () => {
         _getUserById(userId);
         return userId;
     };
+
+    const handleModal = () => {
+        _setModalName('user');
+        _setModalOpen(true);
+    }
+    
+    const handleModalResetPassword = () => {
+        _setModalName('resetPassword');
+        _setModalOpen(true);
+    }
 
 
     useEffect(() => {
@@ -61,8 +70,11 @@ export const UserTableList = () => {
                         <TableCell>{`${user.first_name} ${user.middle_name} ${user.last_name}`}</TableCell>
                         <TableCell>{user.groups[0]?.name || "Super Usuario"}</TableCell>
                         <TableCell onClick={() => getUserById(user.id)}>
-                            <Button variant="outline" onClick={() => _setModalOpen(true)}>
+                            <Button variant="outline" onClick={handleModal}>
                                 <UserRoundPen />
+                            </Button>
+                            <Button className="ml-2" variant="outline" onClick={handleModalResetPassword} title="Restablecer contraseña">
+                                <KeyRound />
                             </Button>
                         </TableCell>
                     </TableRow>

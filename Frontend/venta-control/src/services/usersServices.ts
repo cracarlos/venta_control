@@ -58,7 +58,7 @@ export const putUsers = async (userData: UserRegister): Promise<any> => {
 
 export const postPasswordUpdate = async (passwords: PasswordUpdate): Promise<any> => {
     try {
-        const resp = await api.post<any>(`user-password/user_password/`, passwords);
+        const resp = await api.post<any>(`password/password_update/`, passwords);
         return resp;
 
     } catch (error: any) {
@@ -77,6 +77,19 @@ export const getGroups = async (): Promise<Groups[]> => {
     } catch (error: any) {
         if (error.response) {
             throw error.response.data;
+        }
+        throw new Error("Error de red o servidor no disponible");
+    }
+};
+
+export const patchResetPassword = async (id: number): Promise<any> => {
+    try {
+        const resp = await api.patch<any>(`password/default/${id}` );
+        return resp;
+
+    } catch (error: any) {
+        if (error.response) {
+            return error.response;
         }
         throw new Error("Error de red o servidor no disponible");
     }

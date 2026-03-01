@@ -1,4 +1,4 @@
-import { getGroups, getUsers, getUserId, putUsers } from '@/services/usersServices'
+import { getGroups, getUsers, getUserId, putUsers, patchResetPassword } from '@/services/usersServices'
 import type { Groups } from '@/types/groups';
 import type { User, UserRegister } from '@/types/user';
 import { useAppDispatch, useAppSelector } from './useStore';
@@ -32,6 +32,11 @@ export const useUsersStore = () => {
     const _cleanUser = async () => {
         dispatch(cleanUser());
     }
+    
+    const _patchResetPassword = async (id:number) => {
+        const resp = await patchResetPassword(id);
+        return resp
+    }
 
     return {
         // Methods
@@ -40,8 +45,9 @@ export const useUsersStore = () => {
         _getUserById,
         _cleanUser,
         _editUser,
+        _patchResetPassword,
 
         // Propierty
-        userData
+        userData,
     }
 }

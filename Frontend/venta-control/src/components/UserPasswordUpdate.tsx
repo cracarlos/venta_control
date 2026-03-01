@@ -44,8 +44,8 @@ export const UserPasswordUpdate = () => {
     if (resp.status == 200) {
       setTimeout(() => {
         _passwordUpdateSlice(resp.data.userPasswordChanged);
-        navigate("/dashboard", { replace: true });
         toast.success("Contraseña actualizada", { position: "bottom-right" })
+        navigate("/dashboard", { replace: true });
       }, 1000);
     } else {
       setIsError(false);
